@@ -1,12 +1,17 @@
 import {SyntheticEvent, useContext, useState} from "react";
-import {IsLoggedContext} from "../../contexts/isLogged.context";
+import {LoggedUserContext} from "../../contexts/isLogged.context";
+import {useNavigate} from "react-router-dom";
 
 export const LoginForm = () => {
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const {isLoggedIn, setIsLoggedIn} = useContext(IsLoggedContext);
+    const {setLoggedUser} = useContext(LoggedUserContext);
 
     const [loading, setLoading] = useState(false)
+
+
+    const navigate = useNavigate();
 
     const sendLoginData = async (e: SyntheticEvent) => {
         e.preventDefault();
@@ -26,18 +31,16 @@ export const LoginForm = () => {
             })
 
             const data = await res.json()
+            setLoggedUser(data);
 
             setEmail('');
             setPassword('');
 
-            setIsLoggedIn(data.isLogged);
-
-            console.log(data.isLogged)
 
 
+            setTimeout(() => navigate('/'), 3000)
 
-
-
+            return data
 
         } catch (e) {
             throw new Error('Something went wrong, please try again.')
@@ -52,6 +55,7 @@ export const LoginForm = () => {
 
     return <div className='login-form-container'>
         <form action="" onSubmit={sendLoginData}>
+
             <label>
                 E-mail: <input type="email" required placeholder='e-mail' value={email} onChange={e => setEmail( e.target.value)}/>
             </label>
@@ -59,6 +63,8 @@ export const LoginForm = () => {
             <label>
                 Password: <input type="password" required placeholder='password' value={password} onChange={e => setPassword(e.target.value)}/>
             </label>
+
+            <p><a href="/">Return to homepage</a></p>
 
             <button type='submit'>Login</button>
 
